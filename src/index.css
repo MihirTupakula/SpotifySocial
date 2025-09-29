@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Base colors - Music platform theme */
+    /* Base colors - Freshly squeezed theme */
     --background: 240 10% 8%;
     --foreground: 300 20% 98%;
 
@@ -20,20 +20,20 @@ All colors MUST be HSL.
     --popover: 240 8% 12%;
     --popover-foreground: 300 20% 98%;
 
-    /* Primary brand - Spotify-inspired green */
-    --primary: 142 76% 36%;
+    /* Primary brand - Freshly squeezed orange */
+    --primary: 25 100% 50%;
     --primary-foreground: 300 20% 98%;
 
-    /* Secondary - Deep purple */
-    --secondary: 263 70% 50%;
-    --secondary-foreground: 300 20% 98%;
+    /* Secondary - Freshly squeezed amber */
+    --secondary: 45 100% 50%;
+    --secondary-foreground: 240 10% 8%;
 
     /* Muted elements */
     --muted: 240 6% 16%;
     --muted-foreground: 240 10% 65%;
 
-    /* Accent - Vibrant purple */
-    --accent: 270 100% 70%;
+    /* Accent - Freshly squeezed yellow */
+    --accent: 60 100% 60%;
     --accent-foreground: 240 10% 8%;
 
     /* Destructive */
@@ -43,19 +43,19 @@ All colors MUST be HSL.
     /* Borders and inputs */
     --border: 240 6% 20%;
     --input: 240 6% 16%;
-    --ring: 270 100% 70%;
+    --ring: 25 100% 50%;
 
     --radius: 0.75rem;
 
-    /* Music platform gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(270 100% 70%), hsl(263 70% 50%));
-    --gradient-secondary: linear-gradient(135deg, hsl(142 76% 36%), hsl(120 100% 25%));
+    /* Freshly squeezed gradients */
+    --gradient-primary: linear-gradient(135deg, #FF7900, #FFBF00);
+    --gradient-secondary: linear-gradient(135deg, #FFE642, #F2CF7E);
     --gradient-card: linear-gradient(135deg, hsl(240 8% 12%), hsl(240 6% 16%));
-    --gradient-hero: linear-gradient(135deg, hsl(270 100% 70% / 0.9), hsl(263 70% 50% / 0.9));
+    --gradient-hero: linear-gradient(135deg, #FF7900 / 0.9, #FFBF00 / 0.9);
 
     /* Audio wave animation */
-    --wave-primary: hsl(270 100% 70%);
-    --wave-secondary: hsl(142 76% 36%);
+    --wave-primary: #FF7900;
+    --wave-secondary: #FFE642;
 
     /* Glass morphism */
     --glass-bg: hsl(240 8% 12% / 0.6);
@@ -64,12 +64,12 @@ All colors MUST be HSL.
     /* Sidebar */
     --sidebar-background: 240 8% 10%;
     --sidebar-foreground: 300 20% 98%;
-    --sidebar-primary: 270 100% 70%;
-    --sidebar-primary-foreground: 240 10% 8%;
+    --sidebar-primary: 25 100% 50%;
+    --sidebar-primary-foreground: 300 20% 98%;
     --sidebar-accent: 240 6% 16%;
     --sidebar-accent-foreground: 300 20% 98%;
     --sidebar-border: 240 6% 20%;
-    --sidebar-ring: 270 100% 70%;
+    --sidebar-ring: 25 100% 50%;
   }
 
   /* Light mode overrides - keeping dark as default for music app */

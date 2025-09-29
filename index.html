@@ -20,5 +20,13 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script>
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        console.log('Spotify Web Playback SDK is ready');
+        // The SDK is now available as window.Spotify
+        // The PlayerContext will detect this and initialize
+      };
+    </script>
   </body>
 </html>

@@ -14,6 +14,13 @@ export default {
     },
     extend: {
       colors: {
+        // Freshly squeezed color palette
+        brand: {
+          amber: "#FFBF00",
+          cream: "#F2CF7E", 
+          yellow: "#FFE642",
+          orange: "#FF7900",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

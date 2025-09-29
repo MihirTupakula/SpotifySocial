@@ -1,32 +1,55 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share, Play, Pause } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Heart, MessageCircle, Share, Play, Pause, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
+import { SpotifyTrack } from '@/services/spotify';
+import { usePlayer } from '@/contexts/PlayerContext';
 
 interface MusicCardProps {
-  song: {
-    id: string;
-    title: string;
-    artist: string;
-    albumArt: string;
-    user: {
-      name: string;
-      avatar: string;
-    };
-    likes: number;
-    comments: number;
-    isLiked?: boolean;
-  };
+  track: SpotifyTrack;
 }
 
-export function MusicCard({ song }: MusicCardProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLiked, setIsLiked] = useState(song.isLiked || false);
-  const [likes, setLikes] = useState(song.likes);
+export function MusicCard({ track }: MusicCardProps) {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(Math.floor(Math.random() * 100)); // Random likes for demo
+  const { playTrack, togglePlay, isPlaying, currentTrack, isReady, deviceId } = usePlayer();
 
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+  // Add error handling for missing track data
+  if (!track) {
+    console.error('MusicCard: No track provided');
+    return null;
+  }
+
+  if (!track.album || !track.artists) {
+    console.error('MusicCard: Invalid track data:', track);
+    return null;
+  }
+
+  // Check if this track is currently playing
+  const isCurrentTrack = currentTrack?.id === track.id;
+  const isCurrentlyPlaying = isCurrentTrack && isPlaying;
+
+  const handlePlayPause = async () => {
+    console.log('MusicCard handlePlayPause called');
+    console.log('Player state:', { isReady, isCurrentTrack, isCurrentlyPlaying, deviceId });
+    console.log('Track:', track.name);
+    console.log('Preview URL available:', !!track.preview_url);
+    
+    if (!isReady && !track.preview_url) {
+      console.log('Player not ready and no preview URL available');
+      return;
+    }
+
+    if (isCurrentTrack && isReady) {
+      // If this is the current track, toggle play/pause
+      console.log('Toggling play/pause for current track');
+      await togglePlay();
+    } else {
+      // If this is a different track, play it
+      console.log('Playing new track:', track.name);
+      await playTrack(track);
+    }
   };
 
   const handleLike = () => {
@@ -34,39 +57,66 @@ export function MusicCard({ song }: MusicCardProps) {
     setLikes(prev => isLiked ? prev - 1 : prev + 1);
   };
 
-  return (
-    <Card className="p-4 glass-card hover:scale-[1.02] transition-all duration-300">
-      {/* User header */}
-      <div className="flex items-center gap-3 mb-3">
-        <Avatar className="w-8 h-8">
-          <AvatarImage src={song.user.avatar} />
-          <AvatarFallback>{song.user.name[0]}</AvatarFallback>
-        </Avatar>
-        <span className="text-sm font-medium text-foreground">{song.user.name}</span>
-      </div>
+  const handleSpotifyLink = () => {
+    window.open(track.external_urls.spotify, '_blank');
+  };
 
-      {/* Album art and song info */}
-      <div className="flex items-center gap-4 mb-4">
-        <div className="relative group">
-          <img 
-            src={song.albumArt} 
-            alt={`${song.title} album art`}
-            className="w-16 h-16 rounded-lg object-cover"
-          />
+  const formatDuration = (ms: number) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  try {
+    return (
+      <Card className="p-4 hover:scale-[1.02] transition-all duration-300 group">
+        {/* Album art and song info */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className="relative group">
+            <img 
+              src={track.album?.images?.[0]?.url || '/placeholder-album.png'} 
+              alt={`${track.name || 'Unknown Track'} album art`}
+              className="w-16 h-16 rounded-lg object-cover"
+            />
           <Button
             size="sm"
             variant="secondary"
             className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
             onClick={handlePlayPause}
+            disabled={(!isReady || !deviceId) && !track.preview_url}
+            title={(!isReady || !deviceId) && !track.preview_url ? "Player not ready" : "Play track"}
           >
-            {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+            {isCurrentlyPlaying ? <Pause size={16} /> : <Play size={16} />}
           </Button>
         </div>
         
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-foreground truncate">{song.title}</h3>
-          <p className="text-sm text-muted-foreground truncate">{song.artist}</p>
+          <h3 className="font-semibold text-foreground truncate">{track.name}</h3>
+          <p className="text-sm text-muted-foreground truncate">
+            {track.artists.map(artist => artist.name).join(', ')}
+          </p>
+          <p className="text-xs text-muted-foreground truncate">{track.album.name}</p>
         </div>
+      </div>
+
+      {/* Track details */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="text-xs">
+            {formatDuration(track.duration_ms)}
+          </Badge>
+          <Badge variant="outline" className="text-xs">
+            {track.popularity}% popular
+          </Badge>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleSpotifyLink}
+          className="opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <ExternalLink size={14} />
+        </Button>
       </div>
 
       {/* Audio wave visualization (mock) */}
@@ -100,7 +150,7 @@ export function MusicCard({ song }: MusicCardProps) {
           
           <Button variant="ghost" size="sm" className="text-muted-foreground">
             <MessageCircle size={16} />
-            <span className="ml-1 text-sm">{song.comments}</span>
+            <span className="ml-1 text-sm">0</span>
           </Button>
         </div>
         
@@ -109,5 +159,15 @@ export function MusicCard({ song }: MusicCardProps) {
         </Button>
       </div>
     </Card>
-  );
+    );
+  } catch (error) {
+    console.error('Error rendering MusicCard:', error, track);
+    return (
+      <Card className="p-4">
+        <div className="text-center text-muted-foreground">
+          <p>Error loading track</p>
+        </div>
+      </Card>
+    );
+  }
 }

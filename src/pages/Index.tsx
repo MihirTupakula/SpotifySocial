@@ -1,15 +1,39 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SpotifyLoginButton } from '@/components/landing/SpotifyLoginButton';
-import MainApp from './MainApp';
+import { useAuth } from '@/contexts/AuthContext';
 import { Music, Users, Trophy, MessageCircle, Sparkles } from 'lucide-react';
 
 const Index = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  console.log('Index component rendering...');
+  const { isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+  
+  console.log('Index - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading);
 
-  if (isLoggedIn) {
-    return <MainApp />;
+  useEffect(() => {
+    console.log('Index useEffect - isAuthenticated changed:', isAuthenticated);
+    if (isAuthenticated) {
+      console.log('Index: User is authenticated, navigating to /app');
+      navigate('/app');
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 mx-auto mb-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return null; // Will redirect via useEffect
   }
 
   return (
@@ -56,7 +80,7 @@ const Index = () => {
 
           {/* CTA */}
           <div className="space-y-4">
-            <SpotifyLoginButton onLogin={() => setIsLoggedIn(true)} />
+            <SpotifyLoginButton />
             <p className="text-xs text-muted-foreground">
               Connect your Spotify account to get started
             </p>
