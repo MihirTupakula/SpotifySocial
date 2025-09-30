@@ -1,8 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 
-const SPOTIFY_CLIENT_ID = 'f07366f853f94e658067364c4d41e743';
-const SPOTIFY_CLIENT_SECRET = 'ae8226504b8e42dab49e051aa6fcfbe2';
-const SPOTIFY_REDIRECT_URI = 'http://127.0.0.1:8080/auth/callback';
+const SPOTIFY_CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!;
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET!;
+const SPOTIFY_REDIRECT_URI = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI || 'http://127.0.0.1:8080/auth/callback';
 
 const SPOTIFY_SCOPES = [
   'user-read-private',
